@@ -25,3 +25,12 @@ Exploring The Code
   [create-near-app]: https://github.com/near/create-near-app
   [correct target]: https://github.com/near/near-sdk-rs#pre-requisites
   [cargo]: https://doc.rust-lang.org/book/ch01-03-hello-cargo.html
+
+
+Description
+==================
+Nhiều người chơi sẽ thực hiện cá cược bóng đá
+Thông tin mỗi user cá cược : 
+- accountId
+- tỷ số
+- Số tiền
