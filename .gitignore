@@ -1,0 +1,7 @@
+/neardev/
+/*/node_modules/*
+mynote/out/*
+/.idea/
+/football-bet/node_modules/
+mynote/node_modules
+/expense/node_modules/
