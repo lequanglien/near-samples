@@ -1,0 +1,1 @@
+/Users/lienlq/Desktop/Plats/vbi-near-cource/football-bet/contract/target/wasm32-unknown-unknown/release/libfootball_bet.rlib: /Users/lienlq/Desktop/Plats/vbi-near-cource/football-bet/contract/src/lib.rs
