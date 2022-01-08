@@ -1,4 +1,4 @@
-const CONTRACT_NAME = process.env.CONTRACT_NAME ||'mynote'
+const CONTRACT_NAME = process.env.CONTRACT_NAME || 'vbi-near-cource-mynote.nghilt.testnet'
 
 function getConfig(env) {
   switch (env) {
