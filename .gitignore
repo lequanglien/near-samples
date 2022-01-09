@@ -2,6 +2,7 @@
 mynote/out/*
 /.idea/
 /football-bet/node_modules/
+/football-bet/contract/target/
 /mynote/node_modules
 /expense/node_modules/
 /mynote/.cache/

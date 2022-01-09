@@ -1,4 +1,4 @@
-const CONTRACT_NAME = process.env.CONTRACT_NAME ||'football-bet'
+const CONTRACT_NAME = process.env.CONTRACT_NAME || 'vbi-near-course-football-bet.nghilt.testnet'
 
 function getConfig(env) {
   switch (env) {
