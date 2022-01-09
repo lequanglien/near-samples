@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-/neardev/
-mynote/out/*
-/.idea/
-/football-bet/node_modules/
-/mynote/node_modules
-/expense/node_modules/
-=======
 /neardev/
 mynote/out/*
 /.idea/
@@ -14,4 +6,7 @@ mynote/out/*
 /expense/node_modules/
 /mynote/.cache/
 /mynote/dist/
->>>>>>> 1911e0938f8f3b6cfe474c51ff90210d27942022
+mynote/dist/index.js
+mynote/dist/index.html
+mynote/dist/index.js
+mynote/dist/src.e31bb0bc.js.map

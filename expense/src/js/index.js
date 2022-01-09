@@ -8,49 +8,35 @@ const { networkId } = getConfig(process.env.NODE_ENV || 'development')
 // global variable used throughout
 let currentGreeting;
 
-var noteCount = 0;
-var activeNote = null;
 $('#btn-save').click(function(){
-  var title = $('#title-field').val();
-  var body = $('#body-field').val();
-  console.log('title = ' + title);
-  console.log('body = ' + body);
-  if (title === '' && body === '') {
-    alert ('Please add a title or body to your note.');
+  let transDate = $('#trans_date').val();
+  let transAmount = $('#trans_amount').val();
+  let transContent = $('#trans_content').val();
+
+  if (transDate === '' || transAmount === '' || transContent === '') {
+    alert ('Please input all.');
     return;
   }
-  var created = new Date();
-  var color = $('notepad').css('background-color');
-  var id = noteCount + 1;
-  if (activeNote) {
-    $('#' + activeNote)[0].children[0].innerHTML = title;
-    $('#' + activeNote)[0].children[1].innerHTML = created.toLocaleString("en-US");
-    $('#' + activeNote)[0].children[2].innerHTML = body;
-    $('#' + activeNote)[0].style.backgroundColor = color;
-    activeNote = null;
-    $('#edit-mode').removeClass('display').addClass('no-display');
-  } else {
-    var created = new Date();
-    $('#listed').append('<div id="note' + id + '" style="background-color: ' + color + '"><div class="list-title">' + title + '</div> <div class="list-date">' + created.toLocaleString("en-US") + '</div> <div class="list-text">' + body + '</div> </div>');
-    noteCount++;
-  };
-  $('#title-field').val('');
-  $('#body-field').val('');
-  $('notepad').css('background-color', 'white');
-  $('#title-field').css('background-color', 'white');
-  $('#body-field').css('background-color', 'white');
+
+  $('.table-content').append('<div class="table-row">' +
+    '<div class="table-data">' + transDate + '</div>' +
+    '<div class="table-data">' + transAmount + '</div>' +
+    '<div class="table-data">' + transContent + '</div>' +
+    '</div>');
 
   // Call smart contract to save data
-  insertNote(title, body);
+  console.log('start write transaction to blockchain');
+  addExpense(transContent, transAmount);
 });
 
-async function insertNote(noteName, noteContent) {
+
+async function addExpense(name, value) {
   try {
     // make an update call to the smart contract
-    await window.contract.insert_note({
+    await window.contract.add({
       // pass the value that the user entered in the greeting field
-      name: noteName,
-      _content: noteContent
+      _name: name,
+      _value: value
     })
   } catch (e) {
     alert(
@@ -60,20 +46,15 @@ async function insertNote(noteName, noteContent) {
     )
     throw e
   } finally {
-    // re-enable the form, whether the call succeeded or failed
+    console.log('finish write transaction to blockchain');
+  // re-enable the form, whether the call succeeded or failed
     // fieldset.disabled = false
   }
 }
 
-async function getNotes() {
-  var notes = await window.contract.get_notes();
-  console.log(notes);
-  $('#listed').html();
-  for(var i = 0; i < notes.length; i++) {
-    var note = notes[i];
-    $('#listed').append('<div id="' + note.title + '"><div class="list-title">' + note.title + '</div> <div class="list-text">' + note.content + '</div> </div>');
-    noteCount++;
-  }
+async function getExpense() {
+  var expenses = await window.contract.get();
+  console.log(expenses);
 }
 
 // const submitButton = document.querySelector('form button')
@@ -163,7 +144,7 @@ function signedInFlow() {
   // contractLink.href = contractLink.href.replace('testnet', networkId)
 
   // fetchGreeting()
-  getNotes();
+  getExpense();
 }
 
 // update global currentGreeting variable; update DOM with it
