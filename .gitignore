@@ -4,3 +4,5 @@ mynote/out/*
 /football-bet/node_modules/
 /mynote/node_modules
 /expense/node_modules/
+/mynote/.cache/
+/mynote/dist/

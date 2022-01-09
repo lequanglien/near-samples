@@ -10,34 +10,37 @@ $(document).ready(function(){
     $('#body-field').css('background-color', color);
   })
 
-  $('#btn-save').click(function(){
-    var title = $('#title-field').val();
-    var body = $('#body-field').val();
-    if (title === '' && body === '') {
-      alert ('Please add a title or body to your note.');
-      return;
-    }
-    var created = new Date();
-    var color = $('notepad').css('background-color');
-    var id = noteCount + 1;
-    if (activeNote) {
-      $('#' + activeNote)[0].children[0].innerHTML = title;
-      $('#' + activeNote)[0].children[1].innerHTML = created.toLocaleString("en-US");
-      $('#' + activeNote)[0].children[2].innerHTML = body;
-      $('#' + activeNote)[0].style.backgroundColor = color;
-      activeNote = null;
-      $('#edit-mode').removeClass('display').addClass('no-display');
-    } else {
-      var created = new Date();
-      $('#listed').append('<div id="note' + id + '" style="background-color: ' + color + '"><div class="list-title">' + title + '</div> <div class="list-date">' + created.toLocaleString("en-US") + '</div> <div class="list-text">' + body + '</div> </div>');
-      noteCount++;
-    };
-    $('#title-field').val('');
-    $('#body-field').val('');
-    $('notepad').css('background-color', 'white');
-    $('#title-field').css('background-color', 'white');
-    $('#body-field').css('background-color', 'white');
-  });
+  // $('#btn-save2').click(function(){
+  //   var title = $('#title-field').val();
+  //   var body = $('#body-field').val();
+  //   if (title === '' && body === '') {
+  //     alert ('Please add a title or body to your note.');
+  //     return;
+  //   }
+  //   var created = new Date();
+  //   var color = $('notepad').css('background-color');
+  //   var id = noteCount + 1;
+  //   if (activeNote) {
+  //     $('#' + activeNote)[0].children[0].innerHTML = title;
+  //     $('#' + activeNote)[0].children[1].innerHTML = created.toLocaleString("en-US");
+  //     $('#' + activeNote)[0].children[2].innerHTML = body;
+  //     $('#' + activeNote)[0].style.backgroundColor = color;
+  //     activeNote = null;
+  //     $('#edit-mode').removeClass('display').addClass('no-display');
+  //   } else {
+  //     var created = new Date();
+  //     $('#listed').append('<div id="note' + id + '" style="background-color: ' + color + '"><div class="list-title">' + title + '</div> <div class="list-date">' + created.toLocaleString("en-US") + '</div> <div class="list-text">' + body + '</div> </div>');
+  //     noteCount++;
+  //   };
+  //   $('#title-field').val('');
+  //   $('#body-field').val('');
+  //   $('notepad').css('background-color', 'white');
+  //   $('#title-field').css('background-color', 'white');
+  //   $('#body-field').css('background-color', 'white');
+
+  //   // Call smart contract to save data
+  //   insertNote(title, body);
+  // });
 
   $('#btn-delete').click(function(){
     if (activeNote) {

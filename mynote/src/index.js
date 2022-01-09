@@ -6,24 +6,51 @@ import getConfig from './config'
 const { networkId } = getConfig(process.env.NODE_ENV || 'development')
 
 // global variable used throughout
-let currentGreeting
+let currentGreeting;
 
-const submitButton = document.querySelector('form button')
+var noteCount = 0;
+var activeNote = null;
+$('#btn-save').click(function(){
+  var title = $('#title-field').val();
+  var body = $('#body-field').val();
+  console.log('title = ' + title);
+  console.log('body = ' + body);
+  if (title === '' && body === '') {
+    alert ('Please add a title or body to your note.');
+    return;
+  }
+  var created = new Date();
+  var color = $('notepad').css('background-color');
+  var id = noteCount + 1;
+  if (activeNote) {
+    $('#' + activeNote)[0].children[0].innerHTML = title;
+    $('#' + activeNote)[0].children[1].innerHTML = created.toLocaleString("en-US");
+    $('#' + activeNote)[0].children[2].innerHTML = body;
+    $('#' + activeNote)[0].style.backgroundColor = color;
+    activeNote = null;
+    $('#edit-mode').removeClass('display').addClass('no-display');
+  } else {
+    var created = new Date();
+    $('#listed').append('<div id="note' + id + '" style="background-color: ' + color + '"><div class="list-title">' + title + '</div> <div class="list-date">' + created.toLocaleString("en-US") + '</div> <div class="list-text">' + body + '</div> </div>');
+    noteCount++;
+  };
+  $('#title-field').val('');
+  $('#body-field').val('');
+  $('notepad').css('background-color', 'white');
+  $('#title-field').css('background-color', 'white');
+  $('#body-field').css('background-color', 'white');
 
-document.querySelector('form').onsubmit = async (event) => {
-  event.preventDefault()
+  // Call smart contract to save data
+  insertNote(title, body);
+});
 
-  // get elements from the form using their id attribute
-  const { fieldset, greeting } = event.target.elements
-
-  // disable the form while the value gets updated on-chain
-  fieldset.disabled = true
-
+async function insertNote(noteName, noteContent) {
   try {
     // make an update call to the smart contract
-    await window.contract.set_greeting({
+    await window.contract.insert_note({
       // pass the value that the user entered in the greeting field
-      message: greeting.value
+      name: noteName,
+      _content: noteContent
     })
   } catch (e) {
     alert(
@@ -34,35 +61,79 @@ document.querySelector('form').onsubmit = async (event) => {
     throw e
   } finally {
     // re-enable the form, whether the call succeeded or failed
-    fieldset.disabled = false
-  }
-
-  // disable the save button, since it now matches the persisted value
-  submitButton.disabled = true
-
-  // update the greeting in the UI
-  await fetchGreeting()
-
-  // show notification
-  document.querySelector('[data-behavior=notification]').style.display = 'block'
-
-  // remove notification again after css animation completes
-  // this allows it to be shown again next time the form is submitted
-  setTimeout(() => {
-    document.querySelector('[data-behavior=notification]').style.display = 'none'
-  }, 11000)
-}
-
-document.querySelector('input#greeting').oninput = (event) => {
-  if (event.target.value !== currentGreeting) {
-    submitButton.disabled = false
-  } else {
-    submitButton.disabled = true
+    // fieldset.disabled = false
   }
 }
+
+async function getNotes() {
+  var notes = await contract.get_notes();
+  console.log(notes);
+  $('#listed').html();
+  for(var i = 0; i < notes.length; i++) {
+    var note = notes[i];
+    $('#listed').append('<div id="' + note.title + '"><div class="list-title">' + note.title + '</div> <div class="list-text">' + note.content + '</div> </div>');
+    noteCount++;
+  }
+}
+
+// const submitButton = document.querySelector('form button')
+
+// document.querySelector('form').onsubmit = async (event) => {
+//   event.preventDefault()
+
+//   // get elements from the form using their id attribute
+//   const { fieldset, greeting } = event.target.elements
+
+//   // disable the form while the value gets updated on-chain
+//   fieldset.disabled = true
+
+//   try {
+//     // make an update call to the smart contract
+//     await window.contract.set_greeting({
+//       // pass the value that the user entered in the greeting field
+//       message: greeting.value
+//     })
+//   } catch (e) {
+//     alert(
+//       'Something went wrong! ' +
+//       'Maybe you need to sign out and back in? ' +
+//       'Check your browser console for more info.'
+//     )
+//     throw e
+//   } finally {
+//     // re-enable the form, whether the call succeeded or failed
+//     fieldset.disabled = false
+//   }
+
+//   // disable the save button, since it now matches the persisted value
+//   submitButton.disabled = true
+
+//   // update the greeting in the UI
+//   await fetchGreeting()
+
+//   // show notification
+//   document.querySelector('[data-behavior=notification]').style.display = 'block'
+
+//   // remove notification again after css animation completes
+//   // this allows it to be shown again next time the form is submitted
+//   setTimeout(() => {
+//     document.querySelector('[data-behavior=notification]').style.display = 'none'
+//   }, 11000)
+// }
+
+// document.querySelector('input#greeting').oninput = (event) => {
+//   if (event.target.value !== currentGreeting) {
+//     submitButton.disabled = false
+//   } else {
+//     submitButton.disabled = true
+//   }
+// }
 
 document.querySelector('#sign-in-button').onclick = login
-document.querySelector('#sign-out-button').onclick = logout
+var signoutBtn = document.querySelector('#sign-out-button');
+if(signoutBtn !== undefined && signoutBtn !== null) {
+  signoutBtn.onclick = logout;
+}
 
 // Display the signed-out-flow container
 function signedOutFlow() {
@@ -75,21 +146,24 @@ function signedInFlow() {
 
   document.querySelectorAll('[data-behavior=account-id]').forEach(el => {
     el.innerText = window.accountId
-  })
+  });
+
+  $('#account').html(window.accountId);
 
   // populate links in the notification box
-  const accountLink = document.querySelector('[data-behavior=notification] a:nth-of-type(1)')
-  accountLink.href = accountLink.href + window.accountId
-  accountLink.innerText = '@' + window.accountId
-  const contractLink = document.querySelector('[data-behavior=notification] a:nth-of-type(2)')
-  contractLink.href = contractLink.href + window.contract.contractId
-  contractLink.innerText = '@' + window.contract.contractId
+  // const accountLink = document.querySelector('[data-behavior=notification] a:nth-of-type(1)')
+  // accountLink.href = accountLink.href + window.accountId
+  // accountLink.innerText = '@' + window.accountId
+  // const contractLink = document.querySelector('[data-behavior=notification] a:nth-of-type(2)')
+  // contractLink.href = contractLink.href + window.contract.contractId
+  // contractLink.innerText = '@' + window.contract.contractId
 
   // update with selected networkId
-  accountLink.href = accountLink.href.replace('testnet', networkId)
-  contractLink.href = contractLink.href.replace('testnet', networkId)
+  // accountLink.href = accountLink.href.replace('testnet', networkId)
+  // contractLink.href = contractLink.href.replace('testnet', networkId)
 
-  fetchGreeting()
+  // fetchGreeting()
+  getNotes();
 }
 
 // update global currentGreeting variable; update DOM with it

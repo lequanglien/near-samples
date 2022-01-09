@@ -1,4 +1,7 @@
-ID=vbi-near-cource.quanglien.testnet
+ID=vbi-near-course-mynote.nghilt.testnet
+
+near create-account $ID --masterAccount nghilt.testnet --initialBalance 10
+near delete $ID nghilt.testnet
 
 cargo build --target wasm32-unknown-unknown --release
 
