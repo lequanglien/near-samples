@@ -62,17 +62,20 @@ impl MyNote {
         // Use env::log to record logs permanently to the blockchain!
         env::log(format!("Saving accountId {} : title '{:?}' and content '{:?}'", account_id, name, _content).as_bytes());
 
-        let note = self.notes.get_mut(&account_id);
+        let note_account_opt = self.notes.get_mut(&account_id);
 
-        match note {
-            Some(n) =>
-                if !n.contains_key(name) {
-                    n.insert(account_id, NoteItem{ title: name.to_string(), content: _content.to_string() });
+        match note_account_opt {
+            Some(not_account) =>
+                if !not_account.contains_key(name) {
+                    not_account.insert(name.to_string(), NoteItem{ title: name.to_string(), content: _content.to_string() });
+                } else {
+                    not_account.remove(name);
+                    not_account.insert(name.to_string(), NoteItem{ title: name.to_string(), content: _content.to_string() });
                 },
             None => {
-                let mut note_item = HashMap::<String, NoteItem>::new();
-                note_item.insert(name.to_string(), NoteItem{ title: name.to_string(), content: _content.to_string()});
-                self.notes.insert(account_id,note_item);
+                let mut note = HashMap::<String, NoteItem>::new();
+                note.insert(name.to_string(), NoteItem{ title: name.to_string(), content: _content.to_string()});
+                self.notes.insert(account_id, note);
             }
         }
     }
@@ -102,7 +105,10 @@ impl MyNote {
 
 
     pub fn get_notes(&self) -> HashMap<String, NoteItem> {
-        let account_id = env::current_account_id();
+        let account_id = env::signer_account_id();
+        env::log(format!("Account '{:?}'", account_id).as_bytes());
+
+
         let notes = self.notes.get(&account_id);
 
         match notes {
