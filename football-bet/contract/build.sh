@@ -7,13 +7,16 @@ cargo build --target wasm32-unknown-unknown --release
 
 near deploy --accountId $ID --wasmFile target/wasm32-unknown-unknown/release/football_bet.wasm
 
+near call $ID new '{"owner_id": "'$ID'"}' --accountId $ID
 near call $ID bet '{"_game": "MU-Arsenal", "_bet": "1:1"}' --accountId quanglien.testnet --deposit 1
+near call $ID bet '{"_game": "Chelsea-ManCity", "_bet": "1:1"}' --accountId quanglien.testnet --deposit 1
 near call $ID end_game '{"_game": "MU-Arsenal", "_result": "1:2"}' --accountId $ID
 
 cargo build --target wasm32-unknown-unknown --release && near deploy --accountId $ID --wasmFile target/wasm32-unknown-unknown/release/football_bet.wasm
 
 near view $ID get_bets '{}' --accountId $ID
 near view $ID get '' --accountId $ID
+near view $ID get_bets '' --accountId $ID
 
 
 #demo
