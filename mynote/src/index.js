@@ -66,7 +66,7 @@ async function insertNote(noteName, noteContent) {
 }
 
 async function getNotes() {
-  var notes = await contract.get_notes();
+  var notes = await window.contract.get_notes();
   console.log(notes);
   $('#listed').html();
   for(var i = 0; i < notes.length; i++) {
