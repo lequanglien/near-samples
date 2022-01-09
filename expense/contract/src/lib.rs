@@ -17,6 +17,8 @@ use near_sdk::{AccountId, env, near_bindgen, setup_alloc};
 use near_sdk::serde::{Serialize,Deserialize};
 // use near_sdk::collections::Vector;
 // use std::collections::vec_deque;
+use std::time::{SystemTime, UNIX_EPOCH};
+
 setup_alloc!();
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
@@ -24,7 +26,8 @@ setup_alloc!();
 pub struct ExpenseItem {
     buyer: AccountId,
     name: String,
-    value: u128
+    value: u128,
+    time: String
 }
 
 
@@ -44,13 +47,16 @@ impl Default for ExpenseManager {
     }
   }
 }
+
+
+
 #[near_bindgen]
 impl ExpenseManager {
 
-    pub fn add(&mut self, _name: &String, _value: u128) {
+    pub fn add(&mut self, _name: &String, _value: u128, time: String) {
         let account_id = env::signer_account_id();
 
-        self.records.push(ExpenseItem { buyer: account_id, name: _name.clone(), value: _value })
+        self.records.push(ExpenseItem { buyer: account_id, name: _name.clone(), value: _value, time})
     }
 
     pub fn get(&self) -> (Vec<ExpenseItem>, u128) {
@@ -58,7 +64,7 @@ impl ExpenseManager {
         let mut result = Vec::new();
         let mut total: u128 = 0;
         for x in self.records.iter() {
-            result.push(ExpenseItem { buyer: x.buyer.clone(), name:x.name.clone(), value: x.value });
+            result.push(ExpenseItem { buyer: x.buyer.clone(), name:x.name.clone(), value: x.value, time: x.time.clone()});
             total = total + x.value;
         }
 
