@@ -6,3 +6,7 @@ mynote/out/*
 /expense/node_modules/
 /mynote/.cache/
 /mynote/dist/
+mynote/dist/index.js
+mynote/dist/index.html
+mynote/dist/index.js
+mynote/dist/src.e31bb0bc.js.map
