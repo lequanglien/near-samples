@@ -44,12 +44,14 @@ pub struct Bet {
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct FootballBet {
+    owner_id : AccountId,
     games: HashMap<String, Bet>,
 }
 
 impl Default for FootballBet {
   fn default() -> Self {
     Self {
+        owner_id: "".clone().parse().unwrap(),
         games: HashMap::new(),
     }
   }
@@ -58,21 +60,32 @@ impl Default for FootballBet {
 #[near_bindgen]
 impl FootballBet {
 
+    #[init]
+    pub fn new(owner_id: AccountId) -> Self {
+        Self {
+            owner_id,
+            games : HashMap::<String, Bet>::new()
+        }
+    }
 
-    pub fn get_bets(&self) -> &Bet {
 
+    pub fn get_bets(&self) -> &HashMap<String, Bet> {
         let games = &self.games;
 
-        games.get("MU-Arsenal").unwrap()
+        let result = HashMap::<String, Bet>::new();
+
+        // for (game_id, bet) in games.
+        games.clone()
     }
 
 
     #[payable]
     pub fn bet(&mut self, _game: &String, _bet: &String) -> Balance {
+
         let account_id = env::signer_account_id();
         let deposit_amount = env::attached_deposit();
 
-        let mut game = self.games.get_mut(_game);
+        let  game = self.games.get_mut(_game);
 
         match game {
             Some(bet)=> {
@@ -113,6 +126,8 @@ impl FootballBet {
     pub fn end_game(&mut self, _game: &String, _result: &String) {
         // tạm thời bỏ qua việc kiểm tra caller chỉ là người chủ kèo.
         let account_id = env::signer_account_id();
+
+        assert_ne!(account_id, self.owner_id, "Chỉ được người sở hữu smartcontract mới có quyền thực hiện");
 
         let mut game = self.games.get_mut(_game);
 
