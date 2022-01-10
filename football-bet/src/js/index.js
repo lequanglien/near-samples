@@ -85,14 +85,16 @@ function signedInFlow() {
 async function getBets() {
   var result = await contract.get_bets();
   console.log(result);
-  var bets = result.bets;
+  console.log(result[game]);
+  var gameResult = result[game];
+  var bets = gameResult.bets;
   for(var i = 0; i < bets.length; i++) {
     var bet = bets[i];
     $('.table-content').append('<div class="table-row">' +
       '<div class="table-data">' + bet.account_id + '</div>' +
       '<div class="table-data">' + bet.bet + '</div>' +
       '<div class="table-data">' + bet.bet_value + '</div>' +
-      '<div class="table-data">' + (bet.winner ? 'Won' : 'Lost') + '</div>' +
+      '<div class="table-data">' + (gameResult.online ? '-': (bet.winner ? 'Won' : 'Lost')) + '</div>' +
       '</div>');
   }
 }
